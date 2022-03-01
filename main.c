@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "stackArray.h"
+#include <time.h>
 
 int main()
 {
@@ -12,6 +14,9 @@ int main()
     int i =0;
     float x;
     int n=0;
+
+
+
 
     // get number of random numbers from user
     printf("Enter number of random numbers\n");
@@ -68,13 +73,14 @@ int main()
         }
 
 
-// part of algorithm น1 from book (slow)
+// part of algorithm ยน1 from book (slow)
     int spans[n];
     int k=0;
     int nn = sizeof(stocks_read)/sizeof(float);
     int span_end = 0;
 
-
+    // lets think about time spent here we will start to measure
+    clock_t begin = clock();
     for (i = 0; i< n; i++)
     {
         k = 1;
@@ -91,6 +97,8 @@ int main()
     }
 
 //
+    // here is measuring end
+    clock_t end = clock();
 
     printf("Lets look on stock market!\n");
     for (i=0; i<n; i++)
@@ -98,8 +106,44 @@ int main()
         printf("spans[%d] = %d\n", i, spans[i]);
     }
 
+    int spans2[n];
+    spans2[0] = 1;
+
+
+
+    double time_spent = (double)(end - begin)/CLOCKS_PER_SEC;
+    printf("\nTime for procedure = %lf", time_spent);
+
+    system("PAUSE");
+
+    clock_t begin2 = clock();
+    struct stack_structure S = Create_stack(n);
+    Push_stack(&S,0);
+    for (i=1; i<n; i++)
+    {
+        while ((!IsEmpty(S)) &&(stocks_read[Top_stack(&S)]<=stocks_read[i]))
+        {
+            Pop_stack(&S);
+        }
+        if (IsEmpty(S))
+            spans2[i] = i+1;
+        else
+            spans2[i]= i - Top_stack(&S);
+
+        Push_stack(&S,i);
+
+    }
+
+    clock_t end2 = clock();
+
+    printf("Lets look on stock market again!\n");
+    for (i=0; i<n; i++)
+    {
+        printf("spans2[%d] = %d\n", i, spans2[i]);
+    }
+
+    double time_spent2 = (double)(end2 - begin2)/CLOCKS_PER_SEC;
+    printf("\nTime for procedure = %lf", time_spent2);
+
     return 0;
 }
-
-// to add - time measurement
-// to add - quick algorithm with stack
